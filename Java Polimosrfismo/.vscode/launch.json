@@ -1,0 +1,43 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "TestBonificacion",
+      "request": "launch",
+      "mainClass": "TestBonificacion",
+      "projectName": "Java Polimosrfismo_fb775268"
+    },
+    {
+      "type": "java",
+      "name": "ManejoArchivos",
+      "request": "launch",
+      "mainClass": "ManejoArchivos",
+      "projectName": "Java Polimosrfismo_fb775268"
+    },
+    {
+      "type": "java",
+      "name": "TestCuentaSaldoInsuficiente",
+      "request": "launch",
+      "mainClass": "TestCuentaSaldoInsuficiente",
+      "projectName": "Java Polimosrfismo_fb775268"
+    },
+    {
+      "type": "java",
+      "name": "Flujo",
+      "request": "launch",
+      "mainClass": "Flujo",
+      "projectName": "Java Polimosrfismo_fb775268"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}

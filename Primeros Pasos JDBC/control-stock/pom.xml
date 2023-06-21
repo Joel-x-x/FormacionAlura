@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.alura</groupId>
-	<artifactId>control-de-stock</artifactId>
+	<artifactId>control-stock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Control de Stock</name>
 	<description>Proyecto para trabajar con bases de datos con JDBC</description>
@@ -19,9 +19,14 @@
 			<version>8.0.26</version>
 		</dependency>
 		<dependency>
-			<groupId>com.alura</groupId>
-			<artifactId>control-stock</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.5.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>mchange-commons-java</artifactId>
+			<version>0.2.20</version>
 		</dependency>
 	</dependencies>
 

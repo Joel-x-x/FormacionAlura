@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.Optional;
 
 import javax.swing.JButton;
@@ -18,6 +17,8 @@ import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
 import com.alura.jdbc.controller.ProductoController;
+import com.alura.jdbc.model.Categoria;
+import com.alura.jdbc.model.Producto;
 
 public class ControlDeStockFrame extends JFrame {
 
@@ -25,7 +26,7 @@ public class ControlDeStockFrame extends JFrame {
 
     private JLabel labelNombre, labelDescripcion, labelCantidad, labelCategoria;
     private JTextField textoNombre, textoDescripcion, textoCantidad;
-    private JComboBox<Object> comboCategoria;
+    private JComboBox<Categoria> comboCategoria;
     private JButton botonGuardar, botonModificar, botonLimpiar, botonEliminar, botonReporte;
     private JTable tabla;
     private DefaultTableModel modelo;
@@ -55,6 +56,7 @@ public class ControlDeStockFrame extends JFrame {
         modelo.addColumn("Identificador del Producto");
         modelo.addColumn("Nombre del Producto");
         modelo.addColumn("Descripción del Producto");
+        modelo.addColumn("Cantidad del Producto");
 
         cargarTabla();
 
@@ -96,10 +98,11 @@ public class ControlDeStockFrame extends JFrame {
         textoDescripcion = new JTextField();
         textoCantidad = new JTextField();
         comboCategoria = new JComboBox<>();
-        comboCategoria.addItem("Elige una Categoría");
+        comboCategoria.addItem(new Categoria(0, "Elije un Categoría"));
 
         // TODO
         var categorias = this.categoriaController.listar();
+        categorias.forEach(categoria -> comboCategoria.addItem(categoria));
         // categorias.forEach(categoria -> comboCategoria.addItem(categoria));
 
         textoNombre.setBounds(10, 25, 265, 20);
@@ -179,15 +182,27 @@ public class ControlDeStockFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
         }
+        
+        int filaSeleccionada = tabla.getSelectedRow();
+        int columnaSeleccionada = tabla.getSelectedColumn();
 
-        Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
-                .ifPresentOrElse(fila -> {
-                    Integer id = (Integer) modelo.getValueAt(tabla.getSelectedRow(), 0);
-                    String nombre = (String) modelo.getValueAt(tabla.getSelectedRow(), 1);
-                    String descripcion = (String) modelo.getValueAt(tabla.getSelectedRow(), 2);
+        int numeroColumnas = modelo.getColumnCount();
+        int numeroFilas = modelo.getRowCount();
 
-                    this.productoController.modificar(nombre, descripcion, id);
-                }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+        if (filaSeleccionada >= 0 && filaSeleccionada < numeroFilas && columnaSeleccionada >= 0 && columnaSeleccionada < numeroColumnas) {
+            Integer id = Integer.parseInt(modelo.getValueAt(filaSeleccionada, 0).toString());
+            String nombre = (String) modelo.getValueAt(filaSeleccionada, 1);
+            String descripcion = (String) modelo.getValueAt(filaSeleccionada, 2);
+            Integer nItems = 0;
+            
+            Producto producto = new Producto(id, nombre, descripcion);
+
+            nItems = this.productoController.modificar(producto);                    	
+
+            JOptionPane.showMessageDialog(this, nItems + " item modificado con éxito!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, elige un item");
+        }        		
     }
 
     private void eliminar() {
@@ -198,34 +213,30 @@ public class ControlDeStockFrame extends JFrame {
 
         Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
                 .ifPresentOrElse(fila -> {
-                    Integer id = (Integer) modelo.getValueAt(tabla.getSelectedRow(), 0);
-
-                    this.productoController.eliminar(id);
+                    Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
+                    Integer nItems = 0;
+                    
+                	// Filas eliminadas de la bdd
+                	nItems = this.productoController.eliminar(id);
 
                     modelo.removeRow(tabla.getSelectedRow());
 
-                    JOptionPane.showMessageDialog(this, "Item eliminado con éxito!");
+                    JOptionPane.showMessageDialog(this, nItems + " item eliminado con éxito!");
                 }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
     private void cargarTabla() {
     	
-    	try {
-            var productos = this.productoController.listar();
-    	}
-    	catch(SQLException e) {
-    		throw new RuntimeException(e);
-    	}
-
-
-        try {
-            // TODO
-            // productos.forEach(producto -> modelo.addRow(new Object[] { "id", "nombre",
-            // "descripcion" }));
-        } catch (Exception e) {
-            throw e;
-        }
-    }
+    	modelo.addRow(new Object[] {"Id", "Nombre", "Descripción", "Cantidad"});
+    	
+        var productos = this.productoController.listar();
+        
+         productos.forEach(producto -> modelo.addRow(new Object[] {
+        		 producto.getId(),
+        		 producto.getNombre(),
+        		 producto.getDescripcion(),
+        		 producto.getCantidad()}));
+	}
 
     private void guardar() {
         if (textoNombre.getText().isBlank() || textoDescripcion.getText().isBlank()) {
@@ -244,11 +255,14 @@ public class ControlDeStockFrame extends JFrame {
         }
 
         // TODO
-        var producto = new Object[] { textoNombre.getText(), textoDescripcion.getText(), cantidadInt };
-        var categoria = comboCategoria.getSelectedItem();
+        Producto producto = new Producto(textoNombre.getText(),
+        								 textoDescripcion.getText(),
+        								 cantidadInt);
+        
+        var categoria = (Categoria) comboCategoria.getSelectedItem();
 
-        this.productoController.guardar(producto);
-
+        this.productoController.guardar(producto, categoria.getId());
+	
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 
         this.limpiarFormulario();

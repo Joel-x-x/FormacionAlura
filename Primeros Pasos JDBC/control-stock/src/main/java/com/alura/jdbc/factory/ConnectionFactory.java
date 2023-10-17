@@ -1,7 +1,6 @@
 package com.alura.jdbc.factory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -16,7 +15,7 @@ public class ConnectionFactory{
 		var poolDataSource = new ComboPooledDataSource();
 		poolDataSource.setJdbcUrl("jdbc:mysql://localhost/control_stock?useTimeZone=true&serverTimeZone=UTC");
 		poolDataSource.setUser("root");
-		poolDataSource.setPassword("root");
+		poolDataSource.setPassword("");
 		poolDataSource.setMaxPoolSize(10);
 		
 		this.datasource = poolDataSource;

@@ -5,7 +5,7 @@ public class TestConexion {
         conexion.leerDatos();
       } 
       catch (Exception e) {
-        e.printStackTrace();
+        //e.printStackTrace();
       }
     } catch (Exception e) {
       e.printStackTrace();

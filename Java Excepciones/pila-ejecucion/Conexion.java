@@ -2,7 +2,7 @@ public class Conexion implements AutoCloseable{
 
   public Conexion() {
       System.out.println("Abriendo conexion");
-      throw new IllegalStateException();
+      //throw new IllegalStateException();
     }
     
     public void leerDatos() {
